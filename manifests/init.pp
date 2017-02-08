@@ -27,7 +27,7 @@ define chrctcp(
 
   exec { "chrctcp ${service}":
     command => "chrctcp ${_refresh_service} ${_ensure} ${service}",
-    onlyif  => "awk '/^${op_match}.*${service}/ {print}' < ${file}",
+    onlyif  => "grep '^${op_match}.*${service}' < ${file}",
     path    => ["/usr/bin", "/usr/sbin"]
   }
 }

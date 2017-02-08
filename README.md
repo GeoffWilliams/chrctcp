@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.org/GeoffWilliams/chrctcp.svg?branch=master)](https://travis-ci.org/GeoffWilliams/chrctcp)
 # chrctcp
 
 #### Table of Contents

@@ -1,48 +1,33 @@
-# Class: chrctcp
-# ===========================
+# Chrctcp
 #
-# Full description of class chrctcp here.
+# Manage services in /etc/rc.tcpip with chrctcp
 #
-# Parameters
-# ----------
-#
-# Document parameters here.
-#
-# * `sample parameter`
-# Explanation of what this parameter affects and what it defaults to.
-# e.g. "Specify one or more upstream ntp servers as an array."
-#
-# Variables
-# ----------
-#
-# Here you should define a list of variables that this module would require.
-#
-# * `sample variable`
-#  Explanation of how this variable affects the function of this class and if
-#  it has a default. e.g. "The parameter enc_ntp_servers must be set by the
-#  External Node Classifier as a comma separated list of hostnames." (Note,
-#  global variables should be avoided in favor of class parameters as
-#  of Puppet 2.6.)
-#
-# Examples
-# --------
-#
-# @example
-#    class { 'chrctcp':
-#      servers => [ 'pool.ntp.org', 'ntp.local.company.com' ],
-#    }
-#
-# Authors
-# -------
-#
-# Author Name <author@domain.com>
-#
-# Copyright
-# ---------
-#
-# Copyright 2017 Your name here, unless otherwise noted.
-#
-class chrctcp {
+# @param service Name of service to manage, defaults to $title
+# @param ensure 'disabled' to disable a service or 'enabled' to enable it
+# @param refresh_service True to pass the -S flag to chrctcp else do nothing
+define chrctcp(
+    String $service = $title,
+    Enum['disabled', 'enabled'] $ensure = 'disabled',
+    Boolean $refresh_service = false,
+) {
+  $file = "/etc/rc.tcpip"
+  if $refresh_service {
+    $_refresh_service = "-S"
+  } else {
+    $_refresh_service = ""
+  }
 
+  if $ensure == "disabled" {
+    $_ensure  = "-d"
+    $op_match = "start"
+  } else {
+    $_ensure  = "-a"
+    $op_match = "#start"
+  }
 
+  exec { "chrctcp ${service}":
+    command => "chrctcp ${_refresh_service} ${_ensure} ${service}",
+    onlyif  => "awk '/^${op_match}.*${service}/ {print}' < ${file}",
+    path    => ["/usr/bin", "/usr/sbin"]
+  }
 }

@@ -1,0 +1,3 @@
+chrctcp { "hostmibd":
+  ensure => "disabled",
+}
